@@ -1,0 +1,69 @@
+-- awemedia.lua
+
+local awful = require("awful")
+local client = client
+local pairs = pairs
+local print = print
+local USE_T = true
+
+function media_key(key)
+
+
+    local clients = client.get()
+    local vlc_active = app_is_active("vlc", clients)
+    local music_active  = app_is_active("Banshee", clients)
+    if (vlc_active and music_active) then
+        awful.util.spawn("banshee --stop")
+    end
+    if key == "play" then
+        if (vlc_active) then
+            awful.util.spawn("qdbus org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause")
+        else
+            if music_active then
+                if playerStatus == "Paused" then
+                    awful.util.spawn("qdbus org.mpris.MediaPlayer2.banshee /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Play")
+                elseif playerStatus == "Playing" then
+                    awful.util.spawn("qdbus org.mpris.MediaPlayer2.banshee /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Pause")
+                end ]]--
+                os.execute("/home/gp/.config/awesome/mediakeys.sh banshee play")
+
+            else
+                if os.execute("ping -qw 5 www.google.com") == 0 then
+                    os.execute("/home/gp/.config/awesome/mediakeys.sh banshee fav")
+                else
+                    naughty.notify({ text = "No internet connection, radio station can not be started" })
+                end
+            end
+        end
+    end
+end
+
+
+function app_is_active(app_name, clients)
+    for i, c in pairs(clients) do
+        if app_name == c.instance then
+            return true
+        end
+    end
+    return false
+end
+
+function get_player_status(player)
+    os.execute("/home/gp/.config/awesome/playerStatus.sh "..player)
+    for line in  io.lines("/tmp/awesomeps1") do
+        status = line
+    end
+
+
+    return status
+    
+end
+--[[function sleep(n)
+    local t0 = clock()
+    while clock() - t0 <= n do end
+end]]--
+
+--[[
+--note to self:
+--io.popen gives more control over bash commands)
+--]]
