@@ -10,6 +10,10 @@ require("naughty")
 -- Load Debian menu entries
 require("debian.menu")
 
+-- User files
+require("awemedia")
+
+
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
 -- another config (This code will only ever execute for the fallback config)
@@ -41,24 +45,21 @@ beautiful.init("/home/gp/.config/awesome/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
 terminal = "mate-terminal"
--- editor = os.getenv("EDITOR") or "editor"
 editor = "vim" 
 editor_cmd = terminal .. " -e " .. editor
-
 -- User applications
 browser = "firefox"
 pythonIde = "sh ./Software/pycharm-4.5.2/bin/pycharm.sh"
 
--- Default modkey.
--- Usually, Mod4 is the key with a logo between Control and Alt.
--- If you do not like this or do not have such a key,
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
--- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
+alt_left = "Mod1"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 layouts =
 {
+    awful.layout.suit.spiral,
+    awful.layout.suit.spiral.dwindle,
     awful.layout.suit.floating,
     awful.layout.suit.tile,
     awful.layout.suit.tile.left,
@@ -66,11 +67,9 @@ layouts =
     awful.layout.suit.tile.top,
     awful.layout.suit.fair,
     awful.layout.suit.fair.horizontal,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    awful.layout.suit.max,
-    awful.layout.suit.max.fullscreen,
-    awful.layout.suit.magnifier
+--    awful.layout.suit.max,
+--    awful.layout.suit.max.fullscreen,
+--    awful.layout.suit.magnifier
 }
 -- }}}
 
@@ -79,27 +78,8 @@ layouts =
 tags = {}
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8, 9 }, s, layouts[1])
+    tags[s] = awful.tag({ 1, 2, 3, 4, 5, 6, 7, 8 }, s, layouts[1])
 end
--- }}}
-
--- {{{ Menu
--- Create a laucher widget and a main menu
-myawesomemenu = {
-   { "manual", terminal .. " -e man awesome" },
-   { "edit config", editor_cmd .. " " .. awesome.conffile },
-   { "restart", awesome.restart },
-   { "quit", awesome.quit }
-}
-
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "Debian", debian.menu.Debian_menu.Debian },
-                                    { "open terminal", terminal }
-                                  }
-                        })
-
-mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
-                                     menu = mymainmenu })
 -- }}}
 
 -- {{{ Wibox
@@ -178,7 +158,7 @@ for s = 1, screen.count() do
     -- Add widgets to the wibox - order matters
     mywibox[s].widgets = {
         {
-            mylauncher,
+--            mylauncher,
             mytaglist[s],
             mypromptbox[s],
             layout = awful.widget.layout.horizontal.leftright
@@ -194,13 +174,12 @@ end
 
 -- {{{ Mouse bindings
 root.buttons(awful.util.table.join(
-    awful.button({ }, 3, function () mymainmenu:toggle() end),
+--    awful.button({ }, 3, function () mymainmenu:toggle() end),
     awful.button({ }, 4, awful.tag.viewnext),
     awful.button({ }, 5, awful.tag.viewprev)
 ))
 -- }}}
 
-require("awemedia")
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
@@ -278,11 +257,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey            }, "XF86AudioLowerVolume", function () media_key("prev") end),
     awful.key({ modkey            }, "XF86AudioRaiseVolume", function () media_key("next") end),
     
-    -- awful.key({                   }, "XF86Sleep", function () awful.util.spawn("systemctl suspend") end),
-    -- awful.key({                   }, "XF86Display", function () awful.util.spawn("~/.bin/sdisp.sh") end),
-    
     awful.key({                   }, "Print", function () awful.util.spawn("mate-screenshot --window") end)
-    --awful.key({ "Shift"            }, "Print", function () awful.util.spawn("mate-screenshot --area") end)
 )
 
 clientkeys = awful.util.table.join(
