@@ -11,7 +11,7 @@ require("naughty")
 require("debian.menu")
 
 -- User files
-require("awemedia")
+require("media")
 
 
 -- {{{ Error handling
@@ -49,6 +49,9 @@ editor = "vim"
 editor_cmd = terminal .. " -e " .. editor
 -- User applications
 browser = "firefox"
+mail = "thunderbird"
+explore = terminal.." -e mc"
+calculator = "speedcrunch"
 pythonIde = "sh ./Software/pycharm-4.5.2/bin/pycharm.sh"
 
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
@@ -248,20 +251,43 @@ globalkeys = awful.util.table.join(
               end),
     -- Upper row keys
 
-    awful.key({                   }, "XF86MonBrightnessUp", function () awful.util.spawn("xbacklight +5") end),
-    awful.key({                   }, "XF86MonBrightnessDown", function () awful.util.spawn("xbacklight -5") end),
+    awful.key({                   }, "#180", function () awful.util.spawn(browser) end), -- home key - Firefox
+    awful.key({                   }, "#225", function () awful.util.spawn(explore) end), -- magnifying-glass - Midnight Commander
+    awful.key({                   }, "#163", function () awful.util.spawn(mail) end),    -- mail - Thunderbird
+--[[
+    awful.key({                   }, "#192", function () awful.util.spawn() end),        -- 1 -
+    awful.key({                   }, "#193", function () awful.util.spawn() end),        -- 2 -
+    awful.key({                   }, "#194", function () awful.util.spawn() end),        -- 3 -
+    awful.key({                   }, "#195", function () awful.util.spawn() end),        -- 4 -
+    awful.key({                   }, "#196", function () awful.util.spawn() end),        -- 5 -
+]]--
+    awful.key({                   }, "XF86AudioMute", function () mute("Master") end),
     awful.key({                   }, "XF86AudioLowerVolume", function () volume("Master", "-") end),
     awful.key({                   }, "XF86AudioRaiseVolume", function () volume("Master", "+") end),
-    awful.key({                   }, "XF86AudioMute", function () mute("Master") end),
-    awful.key({                   }, "XF86AudioPlay", function () media_key("play") end),
+    
     awful.key({ modkey            }, "XF86AudioLowerVolume", function () media_key("prev") end),
     awful.key({ modkey            }, "XF86AudioRaiseVolume", function () media_key("next") end),
     
-    awful.key({                   }, "Print", function () awful.util.spawn("mate-screenshot --window") end)
+    awful.key({                   }, "XF86AudioPlay", function () media_key("play") end),
+--[[    
+    awful.key({                   }, "XF86MonBrightnessUp", function () awful.util.spawn("xbacklight +5") end),
+    awful.key({                   }, "XF86MonBrightnessDown", function () awful.util.spawn("xbacklight -5") end),
+]]--
+    awful.key({                   }, "#148", function () awful.util.spawn(calculator) end),
+        
+    awful.key({                   }, "Print", function () awful.util.spawn("mate-screenshot") end),          -- PrtScr - PrintScreen
+    awful.key({ modkey            }, "#107", function () awful.util.spawn("mate-screenshot --window") end),  -- PrtScr - PrintScreen window
+    awful.key({ "Control"         }, "#107", function () awful.util.spawn("mate-screenshot -ia") end)        -- PrtScr - PrintScreen prompt
 )
 
 clientkeys = awful.util.table.join(
-    awful.key({ modkey,           }, "f",      function (c) c.fullscreen = not c.fullscreen  end),
+    awful.key({ modkey,           }, "f",      
+    function (c)
+        --[[if c.instance == "vlc" then
+        else]]--
+            c.fullscreen = not c.fullscreen
+        --end
+    end),
     awful.key({ modkey, "Shift"   }, "c",      function (c) c:kill()                         end),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
@@ -343,6 +369,8 @@ awful.rules.rules = {
     { rule = { class = "pinentry" },
       properties = { floating = true } },
     { rule = { class = "gimp" },
+      properties = { floating = true } },
+    { rule = { class = "Speedcrunch" },
       properties = { floating = true } },
     -- Set Firefox to always map on tags number 2 of screen 1.
     -- { rule = { class = "Firefox" },
