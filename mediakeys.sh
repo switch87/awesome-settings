@@ -1,4 +1,6 @@
 #!/bin/bash
+# $1: Mediaplayer or if no mediaplayer given command
+# $2: Command (only if in comkbination with mediaplayer)
 
 # mediaplayers: all players that the script should automatically controll, players with more priority first
 # standardPlayer: player to start if no other is active
